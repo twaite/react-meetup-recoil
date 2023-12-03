@@ -8,6 +8,7 @@ import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import AuthProvider from "./providers/AuthProvider";
 import { QueryClient, QueryClientProvider } from "react-query";
+import Header from "@components/Header";
 
 const client = new QueryClient();
 
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
       <QueryParamProvider adapter={ReactRouter6Adapter}>
         <AuthProvider>
           <QueryClientProvider client={client}>
-            <h1>App</h1>
+            <Header />
             <Link to="/login">Sign In</Link>
             <Outlet />
           </QueryClientProvider>

@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useMemo, useState } from "react";
 
 type User = {
   id: string;
@@ -10,12 +10,14 @@ type AuthContextType = {
   signIn: (email: string) => void;
   signOut: () => void;
   user: User | null;
+  isSignedIn: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType>({
   signIn: () => {},
   signOut: () => {},
   user: null,
+  isSignedIn: false,
 });
 
 type Props = {
@@ -24,6 +26,8 @@ type Props = {
 
 function AuthProvider(props: Props) {
   const [user, setUser] = useState<User | null>(null);
+
+  const isSignedIn = useMemo(() => Boolean(user?.id), [user]);
 
   const signIn = (email: string) => {
     // Perform sign-in logic here
@@ -41,7 +45,7 @@ function AuthProvider(props: Props) {
   };
 
   return (
-    <AuthContext.Provider value={{ signIn, signOut, user }}>
+    <AuthContext.Provider value={{ signIn, signOut, user, isSignedIn }}>
       {props.children}
     </AuthContext.Provider>
   );
