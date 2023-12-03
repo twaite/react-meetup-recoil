@@ -6,7 +6,7 @@ type Props = {
   size?: "sm" | "md" | "lg" | "xl";
   fullWidth?: boolean;
   className?: string;
-  type: "submit" | "button";
+  type?: "submit" | "button";
 };
 
 export default function Button({

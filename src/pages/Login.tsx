@@ -3,7 +3,7 @@ import { AuthContext } from "@app/providers/AuthProvider";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 
-export default function Example() {
+export default function LoginPage() {
   /** Custom Hooks */
   const { signIn } = useContext(AuthContext);
   const navigate = useNavigate();

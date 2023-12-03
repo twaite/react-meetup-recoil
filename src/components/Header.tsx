@@ -5,17 +5,18 @@ import { AuthContext } from "@app/providers/AuthProvider";
 import Button from "./Button";
 import ThemeToggle from "./ThemeToggle";
 import { Link, useLocation } from "react-router-dom";
+import clsx from "clsx";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
+export default function Header() {
   const { pathname } = useLocation();
   const { isSignedIn } = useContext(AuthContext); // Access the isSignedIn value from the AuthContext
 
   // Hide the header on the login and signout pages
-  if (["/login", "signout"].includes(pathname)) {
+  if (["/login", "/signout"].includes(pathname)) {
     return null;
   }
 
@@ -50,18 +51,28 @@ export default function Example() {
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                   {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                  <a
-                    href="#"
-                    className="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
+                  <Link
+                    to="/"
+                    className={clsx(
+                      "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                      pathname === "/"
+                        ? "border-indigo-500 text-gray-900"
+                        : "border-transparent"
+                    )}
                   >
                     Product
-                  </a>
-                  <a
-                    href="#"
-                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  </Link>
+                  <Link
+                    to="/learn"
+                    className={clsx(
+                      "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                      pathname === "/learn"
+                        ? "border-indigo-500 text-gray-900"
+                        : "border-transparent"
+                    )}
                   >
                     Learn
-                  </a>
+                  </Link>
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
