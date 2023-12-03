@@ -4,13 +4,20 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { AuthContext } from "@app/providers/AuthProvider";
 import Button from "./Button";
 import ThemeToggle from "./ThemeToggle";
+import { Link, useLocation } from "react-router-dom";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Example() {
+  const { pathname } = useLocation();
   const { isSignedIn } = useContext(AuthContext); // Access the isSignedIn value from the AuthContext
+
+  // Hide the header on the login and signout pages
+  if (["/login", "signout"].includes(pathname)) {
+    return null;
+  }
 
   return (
     <Disclosure as="nav" className="bg-white shadow">
@@ -126,7 +133,9 @@ export default function Example() {
                     </Transition>
                   </Menu>
                 ) : (
-                  <Button className="ml-2">Sign in</Button>
+                  <Link to="/login">
+                    <Button className="ml-2">Sign in</Button>
+                  </Link>
                 )}
               </div>
             </div>

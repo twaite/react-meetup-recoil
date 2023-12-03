@@ -7,6 +7,7 @@ export default defineConfig({
     alias: {
       "@app": "/src",
       "@components": "/src/components",
+      "@pages": "/src/pages",
     },
   },
   plugins: [react()],

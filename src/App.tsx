@@ -1,14 +1,10 @@
-import {
-  Link,
-  Outlet,
-  RouterProvider,
-  createBrowserRouter,
-} from "react-router-dom";
+import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import AuthProvider from "./providers/AuthProvider";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Header from "@components/Header";
+import Login from "@pages/Login";
 
 const client = new QueryClient();
 
@@ -20,8 +16,12 @@ const router = createBrowserRouter([
         <AuthProvider>
           <QueryClientProvider client={client}>
             <Header />
-            <Link to="/login">Sign In</Link>
-            <Outlet />
+            <div
+              className="container mx-auto px-4 sm:px-6 lg:px-8
+             max-w-7xl py-4"
+            >
+              <Outlet />
+            </div>
           </QueryClientProvider>
         </AuthProvider>
       </QueryParamProvider>
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <h1>Login</h1>,
+        Component: Login,
       },
       {
         path: "/signout",
