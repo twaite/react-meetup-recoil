@@ -1,9 +1,12 @@
-import React, { createContext, useMemo, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
+import { faker } from "@faker-js/faker";
 
 type User = {
   id: string;
   name: string;
   email: string;
+  avatar: string;
 };
 
 type AuthContextType = {
@@ -25,23 +28,38 @@ type Props = {
 };
 
 function AuthProvider(props: Props) {
+  /** Custom hooks */
+  const navigate = useNavigate();
+
+  /** State */
   const [user, setUser] = useState<User | null>(null);
 
+  /** Memos */
   const isSignedIn = useMemo(() => Boolean(user?.id), [user]);
 
+  /** Effects */
+  useEffect(loadUserFromLocalStorage, []);
+
+  /** Callbacks */
   const signIn = (email: string) => {
+    faker.seed(email.length);
+
     // Perform sign-in logic here
     const newUser: User = {
-      id: "1",
-      name: "John Doe",
+      id: faker.string.uuid(),
+      name: faker.person.fullName(),
       email: email,
+      avatar: faker.internet.avatar(),
     };
+    localStorage.setItem("user", JSON.stringify(newUser));
     setUser(newUser);
   };
 
   const signOut = () => {
     // Perform sign-out logic here
     setUser(null);
+    localStorage.clear();
+    navigate("/login");
   };
 
   return (
@@ -49,6 +67,13 @@ function AuthProvider(props: Props) {
       {props.children}
     </AuthContext.Provider>
   );
+
+  function loadUserFromLocalStorage() {
+    const user = localStorage.getItem("user");
+    if (user) {
+      setUser(JSON.parse(user));
+    }
+  }
 }
 
 export default AuthProvider;

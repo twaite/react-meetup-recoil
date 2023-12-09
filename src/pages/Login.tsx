@@ -42,6 +42,7 @@ export default function LoginPage() {
             </label>
             <div className="mt-2">
               <input
+                tabIndex={1}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 id="email"
@@ -73,6 +74,7 @@ export default function LoginPage() {
             </div>
             <div className="mt-2">
               <input
+                tabIndex={2}
                 id="password"
                 name="password"
                 type="password"

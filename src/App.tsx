@@ -1,9 +1,10 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import Home from "@pages/Home";
-import Login from "@pages/Login";
-import Learn from "@pages/Learn";
 import Providers from "@app/providers/Providers";
+import DashboardPage from "@pages/Dashboard";
+import Home from "@pages/Home";
+import Learn from "@pages/Learn";
+import Login from "@pages/Login";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
         path: "/dashboard",
         children: [
           {
+            Component: DashboardPage,
             path: "/dashboard/:id",
           },
           {
