@@ -12,9 +12,5 @@ export default function DashboardPage() {
   }
 
   /** Render */
-  return (
-    <div>
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }

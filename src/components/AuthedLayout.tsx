@@ -18,6 +18,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { AuthContext } from "@app/providers/AuthProvider";
 import { KeyboardShortcutsContext } from "@app/providers/KeyboardShortcutsProvider";
+import { TeamContext } from "@app/providers/TeamProvider";
 
 const navigation = [
   { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
@@ -26,11 +27,6 @@ const navigation = [
   { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
   { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
   { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
-];
-const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
 ];
 
 function classNames(...classes: string[]) {
@@ -44,6 +40,7 @@ type Props = {
 export default function AuthedLayout(props: Props) {
   /** Context */
   const { user, signOut } = useContext(AuthContext);
+  const { teams, loading: teamsLoading } = useContext(TeamContext);
   const { setSearchEl } = useContext(KeyboardShortcutsContext);
 
   /** State */
@@ -162,10 +159,10 @@ export default function AuthedLayout(props: Props) {
                             Your teams
                           </div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
-                            {teams.map((team) => (
+                            {teams?.map((team) => (
                               <li key={team.name}>
                                 <a
-                                  href={team.href}
+                                  onClick={team.select}
                                   className={classNames(
                                     team.current
                                       ? "bg-indigo-700 text-white"
@@ -250,9 +247,9 @@ export default function AuthedLayout(props: Props) {
                   </div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
                     {teams.map((team) => (
-                      <li key={team.name}>
+                      <li key={team.id} className="cursor-pointer">
                         <a
-                          href={team.href}
+                          onClick={team.select}
                           className={classNames(
                             team.current
                               ? "bg-indigo-700 text-white"

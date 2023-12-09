@@ -1,15 +1,20 @@
 import { AuthContext } from "@app/providers/AuthProvider";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useContext } from "react";
-import { redirect } from "react-router";
+import { useNavigate } from "react-router";
 
 export default function HomePage() {
+  /** Context */
   const { isSignedIn } = useContext(AuthContext);
 
+  /** Custom hooks */
+  const navigate = useNavigate();
+
   if (isSignedIn) {
-    redirect("/dashboard");
+    navigate("/dashboard");
   }
 
+  /** Render */
   return (
     <div className="relative isolate overflow-hidden bg-white">
       <svg
