@@ -1,13 +1,7 @@
 import React, { createContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { faker } from "@faker-js/faker";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-};
+import { User, fetchUser } from "@app/api";
 
 type AuthContextType = {
   signIn: (email: string) => void;
@@ -44,15 +38,10 @@ function AuthProvider(props: Props) {
   const signIn = (email: string) => {
     faker.seed(email.length);
 
-    // Perform sign-in logic here
-    const newUser: User = {
-      id: faker.string.uuid(),
-      name: faker.person.fullName(),
-      email: email,
-      avatar: faker.internet.avatar(),
-    };
-    localStorage.setItem("user", JSON.stringify(newUser));
-    setUser(newUser);
+    const user = fetchUser(email);
+
+    localStorage.setItem("user", JSON.stringify(user));
+    setUser(user);
   };
 
   const signOut = () => {

@@ -1,22 +1,9 @@
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { faker } from "@faker-js/faker";
-import { fakePromise } from "@app/promises";
+import { ReactNode, createContext, useContext, useMemo } from "react";
 import { useQuery } from "react-query";
 import { AuthContext } from "./AuthProvider";
-
-interface TeamData {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  name: string;
-}
+import { useLocalStorage } from "@uidotdev/usehooks";
+import { first } from "lodash-es";
+import { Team as TeamData, fetchTeams } from "@app/api";
 
 interface Team extends TeamData {
   current: boolean;
@@ -25,11 +12,13 @@ interface Team extends TeamData {
 }
 
 type TeamContextType = {
+  selectedTeam: Team | null;
   teams: Team[];
   loading: boolean;
 };
 
 export const TeamContext = createContext<TeamContextType>({
+  selectedTeam: null,
   teams: [],
   loading: false,
 });
@@ -42,15 +31,23 @@ export default function TeamProvider(props: Props) {
   /** Context */
   const { user } = useContext(AuthContext);
 
+  /** State */
+  const [selectedTeamId, setSelectedTeamId] = useLocalStorage<string | null>(
+    "selectedTeamId",
+    null
+  );
+
   /** Data */
   const { data, isLoading } = useQuery({
     queryKey: ["teams", user?.id],
     queryFn: () => fetchTeams(user!.id),
     enabled: Boolean(user?.id),
+    onSuccess: (data) => {
+      if (!selectedTeamId) {
+        setSelectedTeamId(first(data)?.id ?? null);
+      }
+    },
   });
-
-  /** State */
-  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
 
   /** Memos */
   const teams = useMemo(() => {
@@ -62,39 +59,23 @@ export default function TeamProvider(props: Props) {
         select: () => setSelectedTeamId(t.id),
       })) ?? []
     );
-  }, [data, selectedTeamId]);
+  }, [data, selectedTeamId, setSelectedTeamId]);
 
-  /** Effects */
-  useEffect(() => {
-    if (!selectedTeamId && teams.length > 0) {
-      setSelectedTeamId(teams[0].id);
-    }
-  }, [selectedTeamId, teams]);
+  const selectedTeam = useMemo(
+    () => teams?.find((t) => t.current) ?? null,
+    [teams]
+  );
 
   /** Render */
   return (
     <TeamContext.Provider
       value={{
+        selectedTeam,
         teams,
         loading: isLoading,
       }}
     >
       {props.children}
     </TeamContext.Provider>
-  );
-}
-
-async function fetchTeams(userId: string) {
-  faker.seed(parseInt(userId.replace(/![0-9]/g, "")));
-  return fakePromise<TeamData[]>(
-    faker.helpers.multiple(
-      () => ({
-        id: faker.string.uuid(),
-        createdAt: faker.date.past().toISOString(),
-        updatedAt: faker.date.recent().toISOString(),
-        name: faker.company.name(),
-      }),
-      { count: { min: 1, max: 5 } }
-    )
   );
 }

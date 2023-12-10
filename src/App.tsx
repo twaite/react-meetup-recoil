@@ -24,7 +24,7 @@ const router = createBrowserRouter([
         children: [
           {
             Component: DashboardPage,
-            path: "/dashboard/:id",
+            path: "/dashboard/:itemId",
           },
           {
             path: "/dashboard/ticket/:id",

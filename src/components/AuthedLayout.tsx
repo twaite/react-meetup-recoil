@@ -1,15 +1,13 @@
-import { Fragment, ReactNode, useContext, useState } from "react";
+import { ElementType, Fragment, ReactNode, useContext, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   BellIcon,
-  CalendarIcon,
-  ChartPieIcon,
   Cog6ToothIcon,
-  DocumentDuplicateIcon,
+  DocumentIcon,
   FolderIcon,
-  HomeIcon,
-  UsersIcon,
+  FolderOpenIcon,
+  ListBulletIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -19,15 +17,8 @@ import {
 import { AuthContext } from "@app/providers/AuthProvider";
 import { KeyboardShortcutsContext } from "@app/providers/KeyboardShortcutsProvider";
 import { TeamContext } from "@app/providers/TeamProvider";
-
-const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-  { name: "Team", href: "#", icon: UsersIcon, current: false },
-  { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
-];
+import { Link, useParams } from "react-router-dom";
+import { ItemType, sortItems } from "@app/api";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -37,31 +28,112 @@ type Props = {
   children: ReactNode;
 };
 
+function getComponentForItem(type: ItemType, isOpen: boolean): ElementType {
+  switch (type) {
+    case "Document":
+      return () => <DocumentIcon />;
+    case "Folder":
+      if (isOpen) {
+        return () => <FolderOpenIcon />;
+      }
+      return () => <FolderIcon />;
+    case "List":
+      return () => <ListBulletIcon />;
+  }
+}
+
 export default function AuthedLayout(props: Props) {
+  /** Custom hooks */
+  const { itemId } = useParams();
+
   /** Context */
   const { user, signOut } = useContext(AuthContext);
-  const { teams, loading: teamsLoading } = useContext(TeamContext);
+  const {
+    selectedTeam,
+    teams,
+    loading: teamsLoading,
+  } = useContext(TeamContext);
   const { setSearchEl } = useContext(KeyboardShortcutsContext);
 
   /** State */
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [folderState, setFolderState] = useState<Record<string, boolean>>({});
 
+  /** Render helpers */
   const userNavigation = [
     { name: "Your profile", href: "#" },
     { name: "Sign out", href: "#", onClick: signOut },
   ];
 
+  function Loading() {
+    return (
+      <div className="grid grid-cols-4 gap-3 animate-pulse">
+        <div className="h-6 bg-indigo-500 rounded col-span-4" />
+        <div className="h-6 bg-indigo-500 rounded col-span-3" />
+        <div className="h-6 bg-indigo-500 rounded col-span-4" />
+      </div>
+    );
+  }
+
+  function renderItems(items: Item[]) {
+    if (teamsLoading) {
+      return <Loading />;
+    }
+
+    return (
+      <>
+        {items.sort(sortItems).map((item) => {
+          const Icon = getComponentForItem(item.type, folderState[item.id]);
+          return (
+            <Fragment key={item.name}>
+              <li>
+                <Link
+                  to={`/dashboard/${item.id}`}
+                  onClick={(e) => {
+                    if (item.type === "Folder") {
+                      e.preventDefault();
+                      setFolderState((state) => ({
+                        ...state,
+                        [item.id]: !state[item.id],
+                      }));
+                    }
+                  }}
+                  className={classNames(
+                    itemId === item.id
+                      ? "bg-indigo-700 text-white"
+                      : "text-indigo-200 hover:text-white hover:bg-indigo-700",
+                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold items-center"
+                  )}
+                >
+                  <span className="w-6">
+                    <Icon
+                      className={classNames(
+                        itemId === item.id
+                          ? "text-white"
+                          : "text-indigo-200 group-hover:text-white",
+                        "h-6 w-6 shrink-0"
+                      )}
+                      aria-hidden="true"
+                    />
+                  </span>
+                  {item.name}
+                </Link>
+              </li>
+              {item.children?.length &&
+              (folderState[item.id] ||
+                item?.children.some((c) => c.id === itemId)) ? (
+                <ul className="pl-4">{renderItems(item.children)}</ul>
+              ) : null}
+            </Fragment>
+          );
+        })}
+      </>
+    );
+  }
+
   /** Render */
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
       <div>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
@@ -126,32 +198,12 @@ export default function AuthedLayout(props: Props) {
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                        <div className="text-xs font-semibold leading-6 text-indigo-200">
+                          Space
+                        </div>
                         <li>
                           <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => (
-                              <li key={item.name}>
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    item.current
-                                      ? "bg-indigo-700 text-white"
-                                      : "text-indigo-200 hover:text-white hover:bg-indigo-700",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
-                                >
-                                  <item.icon
-                                    className={classNames(
-                                      item.current
-                                        ? "text-white"
-                                        : "text-indigo-200 group-hover:text-white",
-                                      "h-6 w-6 shrink-0"
-                                    )}
-                                    aria-hidden="true"
-                                  />
-                                  {item.name}
-                                </a>
-                              </li>
-                            ))}
+                            {renderItems(selectedTeam?.items ?? [])}
                           </ul>
                         </li>
                         <li>
@@ -159,24 +211,30 @@ export default function AuthedLayout(props: Props) {
                             Your teams
                           </div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
-                            {teams?.map((team) => (
-                              <li key={team.name}>
-                                <a
-                                  onClick={team.select}
-                                  className={classNames(
-                                    team.current
-                                      ? "bg-indigo-700 text-white"
-                                      : "text-indigo-200 hover:text-white hover:bg-indigo-700",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
-                                >
-                                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                                    {team.initial}
-                                  </span>
-                                  <span className="truncate">{team.name}</span>
-                                </a>
-                              </li>
-                            ))}
+                            {teamsLoading ? (
+                              <Loading />
+                            ) : (
+                              teams?.map((team) => (
+                                <li key={team.name}>
+                                  <a
+                                    onClick={team.select}
+                                    className={classNames(
+                                      team.current
+                                        ? "bg-indigo-700 text-white"
+                                        : "text-indigo-200 hover:text-white hover:bg-indigo-700",
+                                      "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                    )}
+                                  >
+                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
+                                      {team.initial}
+                                    </span>
+                                    <span className="truncate">
+                                      {team.name}
+                                    </span>
+                                  </a>
+                                </li>
+                              ))
+                            )}
                           </ul>
                         </li>
                         <li className="mt-auto">
@@ -213,32 +271,12 @@ export default function AuthedLayout(props: Props) {
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                <div className="text-xs font-semibold leading-6 text-indigo-200">
+                  Space
+                </div>
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-indigo-700 text-white"
-                              : "text-indigo-200 hover:text-white hover:bg-indigo-700",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                        >
-                          <item.icon
-                            className={classNames(
-                              item.current
-                                ? "text-white"
-                                : "text-indigo-200 group-hover:text-white",
-                              "h-6 w-6 shrink-0"
-                            )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
+                    {renderItems(selectedTeam?.items ?? [])}
                   </ul>
                 </li>
                 <li>
@@ -246,24 +284,28 @@ export default function AuthedLayout(props: Props) {
                     Your teams
                   </div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {teams.map((team) => (
-                      <li key={team.id} className="cursor-pointer">
-                        <a
-                          onClick={team.select}
-                          className={classNames(
-                            team.current
-                              ? "bg-indigo-700 text-white"
-                              : "text-indigo-200 hover:text-white hover:bg-indigo-700",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                        >
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                            {team.initial}
-                          </span>
-                          <span className="truncate">{team.name}</span>
-                        </a>
-                      </li>
-                    ))}
+                    {teamsLoading ? (
+                      <Loading />
+                    ) : (
+                      teams.map((team) => (
+                        <li key={team.id} className="cursor-pointer">
+                          <a
+                            onClick={team.select}
+                            className={classNames(
+                              team.current
+                                ? "bg-indigo-700 text-white"
+                                : "text-indigo-200 hover:text-white hover:bg-indigo-700",
+                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                            )}
+                          >
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
+                              {team.initial}
+                            </span>
+                            <span className="truncate">{team.name}</span>
+                          </a>
+                        </li>
+                      ))
+                    )}
                   </ul>
                 </li>
                 <li className="mt-auto">
