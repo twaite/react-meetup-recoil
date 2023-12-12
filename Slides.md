@@ -279,3 +279,30 @@ It's strongly encouraged that you to embrace the effects of the library since th
 - [Jotai](https://jotai.org/docs/core/atom)
 - [Recoil](https://recoiljs.org/)
 - [Zustand](https://github.com/pmndrs/zustand)
+
+---
+
+### When To Consider Atomic State
+
+- You have a lot of nested providers in your application
+- You have lots of independent pieces of state that don't need to interact <!-- element class="fragment" -->
+- You need to rapidly onboard engineers, or handoff to another team <!-- element class="fragment" -->
+- You care more about how the state is modified than the state itself, eg state machines <!-- element class="fragment" -->
+- You hate boilerplate <!-- element class="fragment" -->
+
+---
+
+### Tradeoffs
+
+- More dependencies (insert NPM meme)
+- Flexibility can make it hard to reason about state changes <!-- element class="fragment" -->
+- Large amounts of atoms can actually start having counteracting performance benefits <!-- element class="fragment" -->
+- Lack of structured flow, which can make it more challenging to reason about <!-- element class="fragment" -->
+
+---
+
+### Practical Example
+
+### Questions?
+
+[github.com/twaite/react-meetup-recoil](https://github.com/twaite/react-meetup-recoil)
