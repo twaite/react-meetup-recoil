@@ -18,7 +18,7 @@ import { AuthContext } from "@app/providers/AuthProvider";
 import { KeyboardShortcutsContext } from "@app/providers/KeyboardShortcutsProvider";
 import { TeamContext } from "@app/providers/TeamProvider";
 import { Link, useParams } from "react-router-dom";
-import { ItemType, sortItems } from "@app/api";
+import { ItemType, ItemVariant, sortItems } from "@app/api";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -28,7 +28,7 @@ type Props = {
   children: ReactNode;
 };
 
-function getComponentForItem(type: ItemType, isOpen: boolean): ElementType {
+function getComponentForItem(type: ItemVariant, isOpen: boolean): ElementType {
   switch (type) {
     case "Document":
       return () => <DocumentIcon />;
@@ -75,7 +75,7 @@ export default function AuthedLayout(props: Props) {
     );
   }
 
-  function renderItems(items: Item[]) {
+  function renderItems(items: ItemType[]) {
     if (teamsLoading) {
       return <Loading />;
     }
@@ -88,7 +88,7 @@ export default function AuthedLayout(props: Props) {
             <Fragment key={item.name}>
               <li>
                 <Link
-                  to={`/dashboard/${item.id}`}
+                  to={`/dashboard/${item.type.toLowerCase()}/${item.id}`}
                   onClick={(e) => {
                     if (item.type === "Folder") {
                       e.preventDefault();
@@ -215,7 +215,7 @@ export default function AuthedLayout(props: Props) {
                               <Loading />
                             ) : (
                               teams?.map((team) => (
-                                <li key={team.name}>
+                                <li key={team.id}>
                                   <a
                                     onClick={team.select}
                                     className={classNames(

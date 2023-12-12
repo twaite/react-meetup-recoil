@@ -6,7 +6,7 @@ export async function fakePromise<T>(data: T) {
   );
 }
 
-export function hash(s: string) {
+export function hash(s: string): number {
   let hash = 0;
   for (let i = 0; i < s.length; i++) {
     const char = s.charCodeAt(i);
@@ -42,14 +42,17 @@ export function fetchUser(email: string): User {
  * Teams
  */
 
-export type ItemType = "Folder" | "List" | "Document";
+export type ItemVariant = "Folder" | "List" | "Document";
 
 export type Item = {
   id: string;
   name: string;
-  type: ItemType;
+  type: ItemVariant;
   children?: Item[];
 };
+
+// For some reason importing Item is weird :/
+export type ItemType = Item;
 
 export function sortItems(a: Item, b: Item) {
   const typeOrder = {
@@ -87,7 +90,7 @@ export async function fetchTeams(userId: string) {
         name: faker.company.name(),
         items: faker.helpers.multiple(
           () => {
-            const type = faker.helpers.arrayElement<ItemType>([
+            const type = faker.helpers.arrayElement<ItemVariant>([
               "Folder",
               "List",
               "Document",
@@ -120,11 +123,11 @@ function makeListOrDocument() {
   return {
     id: faker.string.uuid(),
     name: getFileNameForType(faker.helpers.arrayElement(["List", "Document"])),
-    type: faker.helpers.arrayElement<ItemType>(["List", "Document"]),
+    type: faker.helpers.arrayElement<ItemVariant>(["List", "Document"]),
   };
 }
 
-function getFileNameForType(type: ItemType) {
+function getFileNameForType(type: ItemVariant) {
   switch (type) {
     case "Folder":
       return faker.person.jobDescriptor();

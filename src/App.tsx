@@ -1,10 +1,12 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import Providers from "@app/providers/Providers";
-import DashboardPage from "@pages/Dashboard";
+import Dashboard from "@pages/Dashboard";
+import Document from "@pages/Document";
 import Home from "@pages/Home";
 import Learn from "@pages/Learn";
 import Login from "@pages/Login";
+import List from "@pages/List";
 
 const router = createBrowserRouter([
   {
@@ -21,13 +23,18 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
+        Component: Dashboard,
         children: [
           {
-            Component: DashboardPage,
-            path: "/dashboard/:itemId",
+            path: "/dashboard/list/:listId",
+            Component: List,
           },
           {
-            path: "/dashboard/ticket/:id",
+            path: "/dashboard/document/:docId",
+            Component: Document,
+          },
+          {
+            path: "/dashboard/list/:listId/task/:taskId",
           },
         ],
       },
