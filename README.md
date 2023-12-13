@@ -8,6 +8,10 @@ A slide deck is included [here](./Slides.md)
 
 Deps are managed with [bun](https://bun.sh/), to install, run `bun install`.
 
+## Recoil Version
+
+To see the version with recoil, checkout the [recoil](https://github.com/twaite/react-meetup-recoil/tree/recoil) branch.
+
 ## Running
 
 You can run the application with `bun run dev`.
