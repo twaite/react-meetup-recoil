@@ -3,7 +3,6 @@ import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet } from "react-router";
 import Layout from "@components/Layout";
-import KeyboardShortcutsProvider from "./KeyboardShortcutsProvider";
 import { RecoilRoot } from "recoil";
 import { Suspense } from "react";
 
@@ -15,11 +14,9 @@ export default function Providers() {
       <Suspense fallback={<h1>Loading...</h1>}>
         <QueryParamProvider adapter={ReactRouter6Adapter}>
           <QueryClientProvider client={client}>
-            <KeyboardShortcutsProvider>
-              <Layout>
-                <Outlet />
-              </Layout>
-            </KeyboardShortcutsProvider>
+            <Layout>
+              <Outlet />
+            </Layout>
           </QueryClientProvider>
         </QueryParamProvider>
       </Suspense>

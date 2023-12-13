@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, Suspense, useContext, useState } from "react";
+import { Fragment, ReactNode, Suspense, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -10,12 +10,11 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import { KeyboardShortcutsContext } from "@app/providers/KeyboardShortcutsProvider";
 import { useUser } from "@app/recoil/user";
 import { ErrorBoundary } from "react-error-boundary";
 import TeamsLoading from "./TeamsLoading";
-import Items from "./Items";
 import Teams from "./Teams";
+import { useKeyboardShortcuts } from "@app/recoil/keyboard-shortcuts";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -28,7 +27,7 @@ type Props = {
 export default function AuthedLayout(props: Props) {
   /** Context */
   const { user, signOut } = useUser();
-  const { setSearchEl } = useContext(KeyboardShortcutsContext);
+  const { setSearchEl } = useKeyboardShortcuts();
 
   /** State */
   const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import Providers from "@app/providers/Providers";
+import Providers from "@app/Providers";
 import Dashboard from "@pages/Dashboard";
 import Document from "@pages/Document";
 import Home from "@pages/Home";

@@ -18,7 +18,8 @@ function classNames(...classes: string[]) {
 
 export default function Items(props: Props) {
   /** Custom hooks */
-  const { itemId } = useParams();
+  const { listId, docId } = useParams();
+  const itemId = listId ?? docId;
 
   /** State */
   const [folderState, setFolderState] = useState<Record<string, boolean>>({});

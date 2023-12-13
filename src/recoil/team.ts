@@ -64,6 +64,7 @@ export function useTeams() {
   };
 
   function defaultToFirstTeam() {
+    console.log("defaultToFirstTeam", selectedTeamId);
     if (!selectedTeamId && data?.length) {
       setSelectedTeamId(data?.[0]?.id ?? null);
     }
