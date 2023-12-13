@@ -1,18 +1,21 @@
-import { AuthContext } from "@app/providers/AuthProvider";
+import { useUser } from "@app/recoil/user";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
-import { useContext } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
 export default function HomePage() {
   /** Context */
-  const { isSignedIn } = useContext(AuthContext);
+  const { isSignedIn } = useUser();
 
   /** Custom hooks */
   const navigate = useNavigate();
 
-  if (isSignedIn) {
-    navigate("/dashboard");
-  }
+  /** Effects */
+  useEffect(() => {
+    if (isSignedIn) {
+      navigate("/dashboard");
+    }
+  }, [isSignedIn, navigate]);
 
   /** Render */
   return (

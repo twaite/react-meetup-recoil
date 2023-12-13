@@ -16,7 +16,12 @@ export default function KeyboardShortcutsProvider(props: Props) {
   /** Effects */
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        (event.key === "k" || event.key === "f")
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
         // TODO: not working
         searchEl?.focus();
       }
@@ -24,7 +29,7 @@ export default function KeyboardShortcutsProvider(props: Props) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [searchEl]);
 
   return (
     <KeyboardShortcutsContext.Provider value={{ setSearchEl }}>

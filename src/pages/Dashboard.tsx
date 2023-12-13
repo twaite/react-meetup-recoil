@@ -1,10 +1,9 @@
-import { AuthContext } from "@app/providers/AuthProvider";
-import { useContext } from "react";
+import { useUser } from "@app/recoil/user";
 import { Outlet, redirect } from "react-router";
 
 export default function DashboardPage() {
   /** Custom Hooks */
-  const { isSignedIn } = useContext(AuthContext);
+  const { isSignedIn } = useUser();
 
   /** Effects */
   if (!isSignedIn) {

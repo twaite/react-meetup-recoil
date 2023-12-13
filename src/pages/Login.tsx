@@ -1,11 +1,11 @@
 import Button from "@app/components/Button";
-import { AuthContext } from "@app/providers/AuthProvider";
-import { useContext, useState } from "react";
+import { useUser } from "@app/recoil/user";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 export default function LoginPage() {
   /** Custom Hooks */
-  const { signIn } = useContext(AuthContext);
+  const { signIn } = useUser();
   const navigate = useNavigate();
 
   /** State */

@@ -1,14 +1,14 @@
-import { AuthContext } from "@app/providers/AuthProvider";
-import { ReactNode, useContext } from "react";
+import { ReactNode } from "react";
 import MarketingHeader from "./MarketingHeader";
 import AuthedLayout from "./AuthedLayout";
+import { useUser } from "@app/recoil/user";
 
 type Props = {
   children: ReactNode;
 };
 
 export default function Layout(props: Props) {
-  const { isSignedIn } = useContext(AuthContext);
+  const { isSignedIn } = useUser();
 
   if (isSignedIn) {
     return <AuthedLayout>{props.children}</AuthedLayout>;
