@@ -1,37 +1,56 @@
-import { BlockNoteView, useBlockNote } from "@blocknote/react";
-import "@blocknote/core/style.css";
 import { useParams } from "react-router";
-import { useEffect } from "react";
 import { faker } from "@faker-js/faker";
 import { hash } from "@app/api";
+import Editor, { Props as EditorProps } from "@components/Editor";
+import { useQuery } from "react-query";
+import { BlockNoteEditor } from "@blocknote/core";
 
 export default function Document() {
   /** Custom */
   const { docId } = useParams();
 
-  const editor = useBlockNote();
+  /** Fetch data */
+  const { data: editorProps, isLoading } = useQuery({
+    queryKey: ["document", docId],
+    queryFn: () => getInitialContent(docId!),
+    enabled: !!docId,
+    // refetchOnMount: "always",
+  });
 
-  /** Effects */
-  useEffect(generateMarkdown, [docId, editor]);
+  return (
+    !isLoading &&
+    editorProps && (
+      <Editor
+        {...editorProps}
+        key={JSON.stringify(editorProps.initialContent)}
+      />
+    )
+  );
+}
 
-  /** Render */
-  return <BlockNoteView editor={editor} theme="light" />;
+async function getInitialContent(docId: string): Promise<EditorProps> {
+  let initialContent: EditorProps["initialContent"] = [];
+  const savedData = localStorage.getItem(`document:${docId}`);
 
-  /** Effect def */
-  function generateMarkdown() {
+  if (savedData) {
+    initialContent = JSON.parse(savedData);
+  } else {
     faker.seed(hash(docId ?? ""));
 
-    async function parseBlocks() {
-      const blocks = await editor.tryParseMarkdownToBlocks(`
+    initialContent = BlockNoteEditor.create().tryParseMarkdownToBlocks(`
 # ${faker.company.catchPhrase()}
 
 ${faker.lorem.paragraphs(3)}
-      `);
-
-      console.log("replacing");
-      editor.replaceBlocks(editor.topLevelBlocks, blocks);
-    }
-
-    parseBlocks();
+    `);
   }
+
+  return {
+    initialContent,
+    onEditorContentChange(editor) {
+      localStorage.setItem(
+        `document:${docId}`,
+        JSON.stringify(editor.topLevelBlocks)
+      );
+    },
+  };
 }

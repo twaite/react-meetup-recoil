@@ -85,7 +85,7 @@ export default function AuthedLayout(props: Props) {
         {items.sort(sortItems).map((item) => {
           const Icon = getComponentForItem(item.type, folderState[item.id]);
           return (
-            <Fragment key={item.name}>
+            <Fragment key={item.id}>
               <li>
                 <Link
                   to={`/dashboard/${item.type.toLowerCase()}/${item.id}`}
