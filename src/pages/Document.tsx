@@ -37,7 +37,7 @@ async function getInitialContent(docId: string): Promise<EditorProps> {
   } else {
     faker.seed(hash(docId ?? ""));
 
-    initialContent = BlockNoteEditor.create().tryParseMarkdownToBlocks(`
+    initialContent = await BlockNoteEditor.create().tryParseMarkdownToBlocks(`
 # ${faker.company.catchPhrase()}
 
 ${faker.lorem.paragraphs(3)}

@@ -141,3 +141,98 @@ function getFileNameForType(type: ItemVariant) {
 /**
  * Lists
  */
+
+type Status = {
+  id: string;
+  color: string;
+  name: string;
+  order: number;
+};
+
+type Task = {
+  id: string;
+  name: string;
+  status: Status;
+  priority: Status;
+  createdAt: Date;
+  assignedTo: User;
+  dueAt: Date;
+};
+
+type List = {
+  id: string;
+  name: string;
+  tasks: Task[];
+};
+
+export async function getList(listId: string): Promise<List> {
+  faker.seed(hash(listId));
+
+  return fakePromise<List>({
+    id: listId,
+    name: faker.company.buzzNoun(),
+    tasks: faker.helpers.multiple(
+      () => ({
+        id: faker.string.uuid(),
+        createdAt: faker.date.past(),
+        dueAt: faker.date.future(),
+        name: faker.company.buzzPhrase(),
+        assignedTo: fetchUser(faker.internet.email()),
+        status: faker.helpers.arrayElement([
+          // Todo, In Progress, Blocked, Complete
+          {
+            id: faker.string.uuid(),
+            name: "Todo",
+            color: "slategrey",
+            order: 0,
+          },
+          {
+            id: faker.string.uuid(),
+            name: "In Progress",
+            color: "MediumSeaGreen",
+            order: 1,
+          },
+          {
+            id: faker.string.uuid(),
+            name: "Blocked",
+            color: "red",
+            order: 2,
+          },
+          {
+            id: faker.string.uuid(),
+            name: "Complete",
+            color: "seagreen",
+            order: 3,
+          },
+        ]),
+        priority: faker.helpers.arrayElement([
+          {
+            id: faker.string.uuid(),
+            name: "Low",
+            color: "slategrey",
+            order: 0,
+          },
+          {
+            id: faker.string.uuid(),
+            name: "Medium",
+            color: "orange",
+            order: 1,
+          },
+          {
+            id: faker.string.uuid(),
+            name: "High",
+            color: "red",
+            order: 2,
+          },
+          {
+            id: faker.string.uuid(),
+            name: "Urgent",
+            color: "darkred",
+            order: 3,
+          },
+        ]),
+      }),
+      { count: { min: 20, max: 30 } }
+    ),
+  });
+}
