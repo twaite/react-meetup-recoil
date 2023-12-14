@@ -57,7 +57,7 @@ note: This is copied from a real app
 
 _Yes, this is a real example_ <!-- element class="fragment" -->
 
-_Yes, I wrote this code 🤦‍♂️_ <!-- element class="fragment" --> 
+_Yes, I wrote this code 🤦‍♂️_ <!-- element class="fragment" -->
 
 ---
 
@@ -140,6 +140,40 @@ BarChart2 --> ReportProvider: Updates data
 
 ---
 
+### Context Memos
+
+```tsx
+function Provider(props) {
+  const [todos, setTodos] = React.useState([/* ... */]);
+
+  const complete = React.useMemo(/* ... */, [todos]);
+  const uncomplete = React.useMemo(/* ... */, [todos]);
+
+  return (
+    <Provider value={{ todos, complete, uncomplete }}>
+      {props.children}
+    </Provider>
+  );
+}
+```
+
+```tsx
+// Will rerender if completed todos changes!?
+function FinishedTodos() {
+  const { complete } = React.useContext(TodoContext);
+
+  // ...
+}
+```
+
+---
+
+### Demo
+
+## [Sandbox URL](https://codesandbox.io/p/sandbox/spring-night-8h4st9)
+
+---
+
 ### Outline
 
 - The Problem ✅
@@ -154,9 +188,9 @@ BarChart2 --> ReportProvider: Updates data
 
 Atomic state management.
 
-- Atoms
-- Selectors
-- Effects
+- Atoms <!-- element class="fragment" data-fragment-index="1" -->
+- Selectors <!-- element class="fragment" data-fragment-index="1" -->
+- Effects <!-- element class="fragment" data-fragment-index="1" -->
 
 ---
 
@@ -209,40 +243,6 @@ const filteredTodoListState = selector({
 
 ---
 
-### Context Memos
-
-```tsx
-function Provider(props) {
-  const [todos, setTodos] = React.useState([/* ... */]);
-
-  const complete = React.useMemo(/* ... */, [todos]);
-  const uncomplete = React.useMemo(/* ... */, [todos]);
-
-  return (
-    <Provider value={{ todos, complete, uncomplete }}>
-      {props.children}
-    </Provider>
-  );
-}
-```
-
-```tsx
-// Will rerender if completed todos changes!?
-function FinishedTodos() {
-  const { complete } = React.useContext(TodoContext);
-
-  // ...
-}
-```
-
----
-
-### Demo
-
-[Sandbox URL](https://codesandbox.io/p/sandbox/spring-night-8h4st9)
-
----
-
 ### Effects
 
 Instead of `useEffect` these libraries typically offer their own effects:
@@ -284,7 +284,7 @@ It's strongly encouraged that you to embrace the effects of the library since th
 
 ### When To Consider Atomic State
 
-- You have a lot of nested providers in your application
+- You have a lot of nested providers in your application <!-- element class="fragment" -->
 - You have lots of independent pieces of state that don't need to interact <!-- element class="fragment" -->
 - You need to rapidly onboard engineers, or handoff to another team <!-- element class="fragment" -->
 - You care more about how the state is modified than the state itself, eg state machines <!-- element class="fragment" -->
@@ -295,13 +295,40 @@ It's strongly encouraged that you to embrace the effects of the library since th
 ### Tradeoffs
 
 - More dependencies (insert NPM meme)
-- Flexibility can make it hard to reason about state changes <!-- element class="fragment" -->
-- Large amounts of atoms can actually start having counteracting performance benefits <!-- element class="fragment" -->
 - Lack of structured flow, which can make it more challenging to reason about <!-- element class="fragment" -->
+- Large amounts of atoms can actually start having counteracting performance benefits <!-- element class="fragment" -->
 
 ---
 
 ### Practical Example
+
+[Code Link](https://github.com/twaite/react-meetup-recoil/blob/main/src/App.tsx)
+
+---
+
+### Some Final Notes
+
+- "A" Solution <!-- element class="fragment" -->
+- Why do you have state in your UI? <!-- element class="fragment" -->
+- How complex is your state? <!-- element class="fragment" -->
+
+---
+
+### More Complex Alternatives
+
+- Redux
+- Mobx
+- etc.
+
+---
+
+### Simple Alternatives
+
+- HATEOAS / URL <!-- element class="fragment" -->
+- GraphQL State (Relay / Apollo) <!-- element class="fragment" -->
+- Tanstack Query <!-- element class="fragment" -->
+
+---
 
 ### Questions?
 
